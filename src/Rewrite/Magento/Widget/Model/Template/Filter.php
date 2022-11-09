@@ -6,36 +6,52 @@ namespace Inkl\WidgetExtParameter\Rewrite\Magento\Widget\Model\Template;
 
 use Inkl\WidgetExtParameter\Model\Service\Base64Service;
 use Magento\Cms\Model\Template\FilterProvider;
+use Magento\Email\Model\Template\Css;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\State;
+use Magento\Framework\Css\PreProcessor\Adapter\CssInliner;
+use Magento\Framework\Escaper;
+use Magento\Framework\Filesystem;
+use Magento\Framework\Filter\VariableResolverInterface;
+use Magento\Framework\Stdlib\StringUtils;
+use Magento\Framework\UrlInterface;
+use Magento\Framework\View\Asset\Repository;
+use Magento\Framework\View\LayoutFactory;
+use Magento\Framework\View\LayoutInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use Magento\Variable\Model\Source\Variables;
+use Magento\Variable\Model\VariableFactory;
+use Magento\Widget\Model\Widget;
+use Psr\Log\LoggerInterface;
 
 class Filter extends \Magento\Widget\Model\Template\Filter
 {
-    private Base64Service $base64Service;
-    private FilterProvider $filterProvider;
-
     private bool $recursiveCheck = false;
 
     public function __construct(
-        \Magento\Framework\Stdlib\StringUtils $string,
-        \Psr\Log\LoggerInterface $logger,
-        \Magento\Framework\Escaper $escaper,
-        \Magento\Framework\View\Asset\Repository $assetRepo,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Variable\Model\VariableFactory $coreVariableFactory,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\View\LayoutInterface $layout,
-        \Magento\Framework\View\LayoutFactory $layoutFactory,
-        \Magento\Framework\App\State $appState,
-        \Magento\Framework\UrlInterface $urlModel,
-        \Pelago\Emogrifier $emogrifier,
-        \Magento\Variable\Model\Source\Variables $configVariables,
+        private readonly Base64Service $base64Service,
+        private readonly FilterProvider $filterProvider,
+        StringUtils $string,
+        LoggerInterface $logger,
+        Escaper $escaper,
+        Repository $assetRepo,
+        ScopeConfigInterface $scopeConfig,
+        VariableFactory $coreVariableFactory,
+        StoreManagerInterface $storeManager,
+        LayoutInterface $layout,
+        LayoutFactory $layoutFactory,
+        State $appState,
+        UrlInterface $urlModel,
+        Variables $configVariables,
+        VariableResolverInterface $variableResolver,
+        Css\Processor $cssProcessor,
+        Filesystem $pubDirectory,
+        CssInliner $cssInliner,
         \Magento\Widget\Model\ResourceModel\Widget $widgetResource,
-        \Magento\Widget\Model\Widget $widget,
-        Base64Service $base64Service,
-        FilterProvider $filterProvider
+        Widget $widget,
+        $variables = [],
+        array $directiveProcessors = []
     ) {
-        $this->base64Service = $base64Service;
-        $this->filterProvider = $filterProvider;
-
         parent::__construct(
             $string,
             $logger,
@@ -48,12 +64,18 @@ class Filter extends \Magento\Widget\Model\Template\Filter
             $layoutFactory,
             $appState,
             $urlModel,
-            $emogrifier,
             $configVariables,
+            $variableResolver,
+            $cssProcessor,
+            $pubDirectory,
+            $cssInliner,
             $widgetResource,
-            $widget
+            $widget,
+            $variables,
+            $directiveProcessors
         );
     }
+
 
     protected function getParameters($value)
     {
