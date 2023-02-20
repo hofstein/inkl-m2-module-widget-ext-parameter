@@ -79,7 +79,7 @@ class WidgetList extends Template
                 $parameter,
                 $group,
                 $uniqueId,
-                $values[$parameterKey] ?? ''
+                (string)($values[$parameterKey] ?? '')
             );
         }
 
