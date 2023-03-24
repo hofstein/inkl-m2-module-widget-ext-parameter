@@ -21,6 +21,29 @@ class WidgetPlugin
     {
         $widgetConfig = $subject->getConfigAsObject($type);
 
+        if (isset($params['conditions']) &&
+            is_array($params['conditions']) &&
+            isset($params['widget_list'])
+        ) {
+            foreach ($params['conditions'] as $conditionKey => $conditionData) {
+                $itemData = explode('--', (string)$conditionKey, 2);
+
+                $itemId = $itemData[0];
+                $itemKey = '';
+                if (isset($itemData[1])) {
+                    $itemKey = '--' . $itemData[1];
+                }
+
+                if (!isset($params['widget_list']['product_list_item'][$itemId]['conditions'])) {
+                    $params['widget_list']['product_list_item'][$itemId]['conditions'] = [];
+                }
+
+                $params['widget_list']['product_list_item'][$itemId]['conditions']['1' . $itemKey] = $conditionData;
+            }
+
+            unset($params['conditions']);
+        }
+
         $newParams = [];
         foreach ($params as $name => $data) {
             if ($this->isBase64($name, $widgetConfig)) {

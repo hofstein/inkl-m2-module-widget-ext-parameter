@@ -183,7 +183,17 @@ class WidgetList extends Template
             $data['values'] = $this->sourceModelPool->get($sourceModel)->toOptionArray();
         }
 
+        $fieldRenderer = null;
+        if ($fieldType && $this->_isClassName($fieldType)) {
+            $fieldRenderer = $this->getLayout()->createBlock($fieldType);
+            $fieldType = 'text';
+        }
+
         $field = $fieldset->addField($fieldId, $fieldType, $data);
+        if ($fieldRenderer) {
+            $fieldRenderer->setData('unique_id', $unqiueId);
+            $field->setRenderer($fieldRenderer);
+        }
 
         if ($helper = $parameter->getData('helper_block')) {
             $helperBlock = $this->context->getLayout()->createBlock(
@@ -228,5 +238,10 @@ class WidgetList extends Template
     });
 })(jQuery);
 PHP_EOF;
+    }
+
+    private function _isClassName($fieldType)
+    {
+        return $fieldType && preg_match('/[A-Z]/', $fieldType) > 0;
     }
 }
