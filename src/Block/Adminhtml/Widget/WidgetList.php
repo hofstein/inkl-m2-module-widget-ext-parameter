@@ -74,12 +74,16 @@ class WidgetList extends Template
                 continue;
             }
 
+            if (!isset($values[$parameterKey])) {
+                $values[$parameterKey] = '';
+            }
+
             $this->createItemField(
                 $fieldset,
                 $parameter,
                 $group,
                 $uniqueId,
-                (string)($values[$parameterKey] ?? '')
+                (is_array($values[$parameterKey]) ? $values[$parameterKey] : (string)$values[$parameterKey])
             );
         }
 
@@ -159,7 +163,7 @@ class WidgetList extends Template
         DataObject $parameter,
         string $group,
         string $unqiueId,
-        string $value
+        string|array $value
     ): AbstractElement {
         $fieldId = sprintf('parameters__%s__%s__%s', $group, $unqiueId, $parameter->getData('key'));
         $fieldName = sprintf('parameters[widget_list][%s][%s][%s]', $group, $unqiueId, $parameter->getData('key'));

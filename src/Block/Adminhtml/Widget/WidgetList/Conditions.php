@@ -25,9 +25,9 @@ class Conditions extends \Magento\CatalogWidget\Block\Product\Widget\Conditions
         }
 
         $widgetParameters = $widgetParameters['widget_list']['product_list_item'][$id] ?? [];
-
         if (isset($widgetParameters['conditions'])) {
             $this->rule->loadPost($widgetParameters);
+            $this->rule->getConditions()->setJsFormObject($htmlId);
         }
 
         return parent::getInputHtml();
