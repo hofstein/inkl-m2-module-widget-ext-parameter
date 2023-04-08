@@ -99,7 +99,7 @@ class Filter extends \Magento\Widget\Model\Template\Filter
             if (is_array($value)) {
                 $array[$key] = $this->arrayMapRecursive($callback, $value);
             } else {
-                $array[$key] = $callback($value);
+                $array[$key] = $callback((string)$value);
             }
         }
         return $array;
