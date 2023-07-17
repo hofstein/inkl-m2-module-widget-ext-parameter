@@ -46,6 +46,10 @@ class WidgetPlugin
 
         $newParams = [];
         foreach ($params as $name => $data) {
+            if (in_array($name, ['magewire'])) {
+                continue;
+            }
+
             if ($this->isBase64($name, $widgetConfig)) {
                 $data = $this->base64Service->serialize($data);
             }
