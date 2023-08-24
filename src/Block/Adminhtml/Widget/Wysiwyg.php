@@ -43,7 +43,7 @@ Class Wysiwyg extends \Magento\Backend\Block\Template
     {
         $wysiwygConfig = $this->wysiwygConfig->getConfig([
             'add_widgets' => false,
-            'add_variables' => false,
+            'add_variables' => true,
         ]);
         $wysiwygConfig->setData('add_images', false);
 
